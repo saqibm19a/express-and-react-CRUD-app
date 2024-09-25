@@ -4,6 +4,7 @@ import axios from 'axios';
 function App() {
   const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({ name: '', email: '' });
+  const [editingUser, setEditingUser] = useState(null);
 
   useEffect(() => {
     fetchUsers();
@@ -28,6 +29,20 @@ function App() {
     }
   };
 
+  const updateUser = async (id) => {
+    try {
+      const response = await axios.put(`http://localhost:3000/api/users/${id}`, editingUser);
+      setUsers(users.map(user => (user.id === id ? response.data.updatedUser : user)));
+      setEditingUser(null);
+    } catch (error) {
+      console.error('Error updating user:', error);
+    }
+  };
+
+  const handleInputChange = (e, setFunction) => {
+    setFunction(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
   return (
     <div className="App">
       <h1>User Management</h1>
@@ -38,21 +53,45 @@ function App() {
         name="name"
         placeholder="Name"
         value={newUser.name}
-        onChange={(e) => setNewUser({ ...newUser, [e.target.name]: e.target.value })}
+        onChange={(e) => handleInputChange(e, setNewUser)}
       />
       <input
         type="email"
         name="email"
         placeholder="Email"
         value={newUser.email}
-        onChange={(e) => setNewUser({ ...newUser, [e.target.name]: e.target.value })}
+        onChange={(e) => handleInputChange(e, setNewUser)}
       />
       <button onClick={addUser}>Add User</button>
 
       <h2>Users List</h2>
       <ul>
         {users.length > 0 ? users.map(user => (
-          <li key={user.id}>{user.name} ({user.email})</li>
+          <li key={user.id}>
+            {editingUser && editingUser.id === user.id ? (
+              <div>
+                <input
+                  type="text"
+                  name="name"
+                  value={editingUser.name}
+                  onChange={(e) => handleInputChange(e, setEditingUser)}
+                />
+                <input
+                  type="email"
+                  name="email"
+                  value={editingUser.email}
+                  onChange={(e) => handleInputChange(e, setEditingUser)}
+                />
+                <button onClick={() => updateUser(user.id)}>Save</button>
+                <button onClick={() => setEditingUser(null)}>Cancel</button>
+              </div>
+            ) : (
+              <div>
+                {user.name} ({user.email})
+                <button onClick={() => setEditingUser(user)}>Edit</button>
+              </div>
+            )}
+          </li>
         )) : (
           <li>No users found.</li>
         )}
