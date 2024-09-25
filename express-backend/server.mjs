@@ -9,6 +9,10 @@ const users = [
   { id: 2, name: 'jan', email: 'jan@gmail.com' },
 ];
 
+app.get('/api/users', (req, res) => {
+  res.status(200).json({ message: 'Get Request - get all users', users });
+});
+
 
 
 app.listen(PORT, () => {
