@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function App() {
+  const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({ name: '', email: '' });
 
-  const handleInputChange = (e) => {
-    setNewUser({ ...newUser, [e.target.name]: e.target.value });
+  // Fetch users when the component mounts
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/users');
+      setUsers(response.data.users || []);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
   };
 
   return (
@@ -17,15 +29,24 @@ function App() {
         name="name"
         placeholder="Name"
         value={newUser.name}
-        onChange={handleInputChange}
+        onChange={(e) => setNewUser({ ...newUser, [e.target.name]: e.target.value })}
       />
       <input
         type="email"
         name="email"
         placeholder="Email"
         value={newUser.email}
-        onChange={handleInputChange}
+        onChange={(e) => setNewUser({ ...newUser, [e.target.name]: e.target.value })}
       />
+
+      <h2>Users List</h2>
+      <ul>
+        {users.length > 0 ? users.map(user => (
+          <li key={user.id}>{user.name} ({user.email})</li>
+        )) : (
+          <li>No users found.</li>
+        )}
+      </ul>
     </div>
   );
 }
