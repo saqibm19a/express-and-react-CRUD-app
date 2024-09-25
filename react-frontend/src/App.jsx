@@ -5,7 +5,6 @@ function App() {
   const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({ name: '', email: '' });
 
-  // Fetch users when the component mounts
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -16,6 +15,16 @@ function App() {
       setUsers(response.data.users || []);
     } catch (error) {
       console.error('Error fetching users:', error);
+    }
+  };
+
+  const addUser = async () => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/users', newUser);
+      setUsers([...users, response.data.newUser]);
+      setNewUser({ name: '', email: '' });
+    } catch (error) {
+      console.error('Error adding user:', error);
     }
   };
 
@@ -38,6 +47,7 @@ function App() {
         value={newUser.email}
         onChange={(e) => setNewUser({ ...newUser, [e.target.name]: e.target.value })}
       />
+      <button onClick={addUser}>Add User</button>
 
       <h2>Users List</h2>
       <ul>
