@@ -39,6 +39,15 @@ function App() {
     }
   };
 
+  const deleteUser = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/users/${id}`);
+      setUsers(users.filter(user => user.id !== id));
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  };
+
   const handleInputChange = (e, setFunction) => {
     setFunction(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -89,6 +98,7 @@ function App() {
               <div>
                 {user.name} ({user.email})
                 <button onClick={() => setEditingUser(user)}>Edit</button>
+                <button onClick={() => deleteUser(user.id)}>Delete</button>
               </div>
             )}
           </li>
