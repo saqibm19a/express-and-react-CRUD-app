@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import './App.css'
+  
 function App() {
-  const [users, setUsers] = useState([]);  // Ensure users is initialized as an empty array
+  const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({ name: '', email: '' });
   const [editingUser, setEditingUser] = useState(null);
 
@@ -23,7 +24,7 @@ function App() {
   // Add a new user
   const addUser = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/api/users', newUser);  // Correct backend URL
+      const response = await axios.post('http://localhost:3000/api/users', newUser); 
       setUsers([...users, response.data.newUser]);
       setNewUser({ name: '', email: '' });
     } catch (error) {
@@ -34,7 +35,7 @@ function App() {
   // Update an existing user
   const updateUser = async (id) => {
     try {
-      const response = await axios.put(`http://localhost:3000/api/users/${id}`, editingUser);  // Correct backend URL
+      const response = await axios.put(`http://localhost:3000/api/users/${id}`, editingUser); 
       setUsers(users.map(user => (user.id === id ? response.data.updatedUser : user)));
       setEditingUser(null);
     } catch (error) {
@@ -59,60 +60,71 @@ function App() {
 
   return (
     <div className="App">
-      <h1>User Management</h1>
+      <h1 className="header">User Management</h1>
 
-      <h2>Add User</h2>
-      <input
-        type="text"
-        name="name"
-        placeholder="Name"
-        value={newUser.name}
-        onChange={(e) => handleInputChange(e, setNewUser)}
-      />
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        value={newUser.email}
-        onChange={(e) => handleInputChange(e, setNewUser)}
-      />
-      <button onClick={addUser}>Add User</button>
+      <div className="form-section">
+        <h2 className="form-header">Add User</h2>
+        <input
+          className="input-field"
+          type="text"
+          name="name"
+          placeholder="Name"
+          value={newUser.name}
+          onChange={(e) => handleInputChange(e, setNewUser)}
+        />
+        <input
+          className="input-field"
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={newUser.email}
+          onChange={(e) => handleInputChange(e, setNewUser)}
+        />
+        <button className="submit-btn" onClick={addUser}>Add User</button>
+      </div>
 
-      <h2>Users List</h2>
-      <ul>
-        {users.length > 0 ? (
-          users.map(user => (
-            <li key={user.id}>
-              {editingUser && editingUser.id === user.id ? (
-                <div>
-                  <input
-                    type="text"
-                    name="name"
-                    value={editingUser.name}
-                    onChange={(e) => handleInputChange(e, setEditingUser)}
-                  />
-                  <input
-                    type="email"
-                    name="email"
-                    value={editingUser.email}
-                    onChange={(e) => handleInputChange(e, setEditingUser)}
-                  />
-                  <button onClick={() => updateUser(user.id)}>Save</button>
-                  <button onClick={() => setEditingUser(null)}>Cancel</button>
-                </div>
-              ) : (
-                <div>
-                  {user.name} ({user.email})
-                  <button onClick={() => setEditingUser(user)}>Edit</button>
-                  <button onClick={() => deleteUser(user.id)}>Delete</button>
-                </div>
-              )}
-            </li>
-          ))
-        ) : (
-          <li>No users found.</li>
-        )}
-      </ul>
+      <div className="list-section">
+        <h2 className="list-header">Users List</h2>
+        <ul className="user-list">
+          {users.length > 0 ? (
+            users.map(user => (
+              <li className="user-item" key={user.id}>
+                {editingUser && editingUser.id === user.id ? (
+                  <div className="edit-section">
+                    <input
+                      className="input-field"
+                      type="text"
+                      name="name"
+                      value={editingUser.name}
+                      onChange={(e) => handleInputChange(e, setEditingUser)}
+                    />
+                    <input
+                      className="input-field"
+                      type="email"
+                      name="email"
+                      value={editingUser.email}
+                      onChange={(e) => handleInputChange(e, setEditingUser)}
+                    />
+                    <button className="submit-btn" onClick={() => updateUser(user.id)}>Save</button>
+                    <button className="cancel-btn" onClick={() => setEditingUser(null)}>Cancel</button>
+                  </div>
+                ) : (
+                  <div className="user-info">
+                    <p>{user.name}</p>
+                    <p>{user.email}</p>
+                    <div className="user-info">
+                    <button className="edit-btn" onClick={() => setEditingUser(user)}>Edit</button>
+                    <button className="delete-btn" onClick={() => deleteUser(user.id)}>Delete</button>
+                    </div>
+                  </div>
+                )}
+              </li>
+            ))
+          ) : (
+            <li className="user-item">No users found.</li>
+          )}
+        </ul>
+      </div>
     </div>
   );
 }
