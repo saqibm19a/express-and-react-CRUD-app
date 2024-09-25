@@ -13,6 +13,14 @@ app.get('/api/users', (req, res) => {
   res.status(200).json({ message: 'Get Request - get all users', users });
 });
 
+app.post('/api/users', (req, res) => {
+  const userId = users.length + 1;
+  const newUser = { id: userId, ...req.body };
+  users.push(newUser);
+  res.status(201).json({ message: 'Post Request - created a user', newUser });
+});
+
+
 
 
 app.listen(PORT, () => {
